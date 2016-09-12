@@ -15,6 +15,7 @@ public:
 
     ~Discovery()
     {
+        Stop();
         libusb_exit(context);
     }
 
