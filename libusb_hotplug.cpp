@@ -43,9 +43,12 @@ public:
 
     void Stop()
     {
-        std::cout << "Stop" << std::endl;
-        libusb_hotplug_deregister_callback(context, handle);
-        started = false;
+        if (started)
+        {
+            std::cout << "Stop" << std::endl;
+            libusb_hotplug_deregister_callback(context, handle);
+            started = false;
+        }
     }
 
     static void LogVidPid(int16_t vid, int16_t pid)
