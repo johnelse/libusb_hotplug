@@ -7,11 +7,15 @@ class Discovery
 {
 public:
     Discovery()
+    : started(false),
+    context(nullptr)
     {
+        libusb_init(&context);
     }
 
     ~Discovery()
     {
+        libusb_exit(context);
     }
 
     void Start()
@@ -20,7 +24,7 @@ public:
         if (!started)
         {
             int ret;
-            ret = libusb_hotplug_register_callback(nullptr,
+            ret = libusb_hotplug_register_callback(context,
                                                    (libusb_hotplug_event)(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED | LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT),
                                                    LIBUSB_HOTPLUG_ENUMERATE,
                                                    LIBUSB_HOTPLUG_MATCH_ANY, // vid
@@ -40,7 +44,7 @@ public:
     void Stop()
     {
         std::cout << "Stop" << std::endl;
-        libusb_hotplug_deregister_callback(nullptr, handle);
+        libusb_hotplug_deregister_callback(context, handle);
         started = false;
     }
 
@@ -76,6 +80,7 @@ private:
     }
 
     bool started;
+    libusb_context *context;
     libusb_hotplug_callback_handle handle;
 };
 
