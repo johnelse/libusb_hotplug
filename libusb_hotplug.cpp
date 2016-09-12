@@ -90,7 +90,6 @@ private:
 
 int main(int argc, char** argv)
 {
-    libusb_init(nullptr);
     std::cout << "Press return to quit..." << std::endl;
 
     Discovery discovery;
@@ -100,7 +99,6 @@ int main(int argc, char** argv)
 
     discovery.Stop();
 
-    libusb_exit(nullptr);
     return 0;
 }
 
