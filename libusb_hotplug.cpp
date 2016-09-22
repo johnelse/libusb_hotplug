@@ -73,6 +73,8 @@ private:
         {
             std::cout << "Got a device but failed to look up its descriptor" << std::endl;
         }
+
+        return 0;
     }
 
     static int OnUsbHotplugCallback(struct libusb_context *ctx,
@@ -80,7 +82,7 @@ private:
                                     libusb_hotplug_event event,
                                     void* discovery)
     {
-        ((Discovery*)discovery)->OnUsbHotplug(ctx, device, event);
+        return ((Discovery*)discovery)->OnUsbHotplug(ctx, device, event);
     }
 
     bool started;
