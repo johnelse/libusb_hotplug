@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <thread>
 
 #include <libusb.h>
 
@@ -39,6 +40,8 @@ public:
             {
                 started = true;
             }
+
+            loop = new std::thread([this] { this->Loop(); });
         }
     }
 
@@ -49,6 +52,10 @@ public:
             std::cout << "Stop" << std::endl;
             libusb_hotplug_deregister_callback(context, handle);
             started = false;
+
+            loop->join();
+            delete loop;
+            loop = nullptr;
         }
     }
 
@@ -85,9 +92,19 @@ private:
         return ((Discovery*)discovery)->OnUsbHotplug(ctx, device, event);
     }
 
+    void Loop()
+    {
+        while (started)
+        {
+            libusb_handle_events_completed(context, nullptr);
+        }
+    }
+
     bool started;
     libusb_context *context;
     libusb_hotplug_callback_handle handle;
+
+    std::thread *loop;
 };
 
 int main(int argc, char** argv)
