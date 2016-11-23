@@ -59,9 +59,23 @@ public:
         }
     }
 
-    static void LogVidPid(int16_t vid, int16_t pid)
+    static void LogEvent(int16_t vid, int16_t pid, libusb_hotplug_event event)
     {
-        std::cout << "Got a device: " << std::hex << vid << "," << pid << std::dec << std::endl;
+        std::string event_string;
+
+        switch (event)
+        {
+            case LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED:
+                event_string = "arrived";
+                break;
+            case LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT:
+                event_string = "left";
+                break;
+            default:
+                event_string = "unknown";
+                break;
+        }
+        std::cout << "Got a device: " << std::hex << vid << "," << pid << "," << event_string << std::dec << std::endl;
     }
 
 private:
@@ -74,7 +88,7 @@ private:
         int ret = libusb_get_device_descriptor(device, &descriptor);
         if (LIBUSB_SUCCESS == ret)
         {
-            LogVidPid(descriptor.idVendor, descriptor.idProduct);
+            LogEvent(descriptor.idVendor, descriptor.idProduct, event);
         }
         else
         {
